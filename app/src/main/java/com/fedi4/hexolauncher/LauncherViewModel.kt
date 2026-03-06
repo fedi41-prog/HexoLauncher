@@ -13,9 +13,11 @@ class LauncherViewModel : ViewModel() {
             is PatternNode.Folder -> {
 
             }
-            null -> {
-                // Feedback
+            is PatternNode.App -> {
+                if (node.packageName != null) startApp(node.packageName)
             }
+            null -> {}
+
         }
     }
 }

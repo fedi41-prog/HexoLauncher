@@ -14,7 +14,12 @@ data class PadPoint(
 
     val text: String,
     val color: Color = Color.White,
-    val visibility: Boolean = true
+    val visibility: Boolean = true,
+
+    val icon: String? = null,
+    val radius: Float = 24f,
+
+    val type: String? = null
 )
 
 class PatternPadState {
@@ -53,6 +58,11 @@ class PatternPadState {
 
     private fun hitTest(pos: Offset) {
         val nearestPoint = points.minBy { (it.center - pos).getDistance() }
+
+
+        //if ((nearestPoint.center - pos).getDistance() > nearestPoint.radius) return
+
+
         if (pattern.isEmpty()) {
             pattern.add(nearestPoint.index)
         }
@@ -70,6 +80,51 @@ fun getNeighbors(id: Int): List<Int> {
     return listOf((id - 1), (id + 1), 0)
 }
 
+
+fun convertToPadPoint(node: PatternNode?, index: Int, center: Offset): PadPoint {
+    when (node) {
+        is PatternNode.Folder ->  return PadPoint(
+            index = index,
+            center = center,
+            text = node.name,
+            color = Color.White,
+            visibility = true,
+            icon = node.icon,
+            radius = 85f,
+            type = "folder"
+        )
+        is PatternNode.App -> return PadPoint(
+            index = index,
+            center = center,
+            text = node.name,
+            color = Color.White,
+            visibility = true,
+            icon = node.packageName,
+            radius = 85f,
+            type = "app"
+        )
+        is PatternNode.Action -> return PadPoint(
+            index = index,
+            center = center,
+            text = node.name,
+            color = Color.White,
+            visibility = true,
+            icon = node.icon,
+            radius = 85f,
+            type = "action"
+        )
+        null -> return PadPoint(
+            index = index,
+            center = center,
+            text = "",
+            color = Color.White,
+            visibility = false,
+            icon = null,
+            radius = 85f,
+            type = "empty"
+        )
+    }
+}
 fun generatePoints(
     canvasSize: Size,
     root: PatternNode.Folder,
@@ -80,14 +135,6 @@ fun generatePoints(
 
     val points = mutableListOf<PadPoint>()
 
-    fun getPointColor(node: PatternNode?): Color {
-        if (node is PatternNode.Action) {
-            return Color.Green
-        } else if (node is PatternNode.Folder) {
-            return Color.Blue
-        }
-        return Color.White
-    }
 
 
     val trace = resolveWithTrace(root, currentPattern)
@@ -105,13 +152,23 @@ fun generatePoints(
         }
     }
 
-    points.add(PadPoint(0, center, nodes[0]?.name ?: "NONE", getPointColor(nodes[0]), visibility = nodes.contains(0)))
+    points.add(convertToPadPoint(
+        node = nodes[0],
+        index = 0,
+        center = center
+    ))
 
     for (i in 0 until 6) {
         val angle = Math.toRadians(60.0 * i - 90.0)
         val x = center.x + cos(angle).toFloat() * ringRadius
         val y = center.y + sin(angle).toFloat() * ringRadius
-        points.add(PadPoint(i + 1, Offset(x, y), nodes[i+1]?.name ?: "NONE", getPointColor(nodes[i+1]), visibility = nodes.contains(i+1)))
+        points.add(convertToPadPoint(
+            node = nodes[i+1],
+            index = i+1,
+            center = Offset(x, y)
+        ))
     }
     return points
 }
+
+

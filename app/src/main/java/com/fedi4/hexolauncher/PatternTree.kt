@@ -8,36 +8,70 @@ class PatternTree {
     val root = PatternNode.Folder(
         "Root",
         mutableMapOf(
-            0 to PatternNode.Folder(
+            1 to PatternNode.Folder(
                 "Social",
                 mutableMapOf(
-
-                    1 to PatternNode.Action(
+                    6 to PatternNode.App(
                         "Whatsapp",
-                        launch = {
-                            startApp("com.whatsapp")
-                        }),
-                    2 to PatternNode.Action(
+                        "com.whatsapp"
+                        ),
+                    2 to PatternNode.App(
                         "Telegram",
-                        launch = { startApp("org.telegram.messenger.web") })
-
+                        "org.telegram.messenger.web"
+                        )
+                )
+            ),
+            0 to PatternNode.Folder(
+                "Favourites",
+                mutableMapOf(
+                    1 to PatternNode.App(
+                        "Habitica",
+                        "com.habitica.app"
+                    ),
+                    2 to PatternNode.App(
+                        "Chrome",
+                        "com.android.chrome"
+                    ),
+                    3 to PatternNode.App(
+                        "Email",
+                        "com.google.android.gm"
+                    ),
+                    4 to PatternNode.App(
+                        "Fotos",
+                        "com.google.android.apps.photos"
+                    ),
+                    5 to PatternNode.App(
+                        "Spotify",
+                        "com.spotify.music"
+                    ),
                 )
             )
         )
     )
 }
-sealed class PatternNode(
-    open val name: String
-) {
 
+
+
+
+
+sealed class PatternNode(
+    open val name: String,
+) {
     class Folder(
         override val name: String,
-        val children: MutableMap<Int, PatternNode> = mutableMapOf()
+        val children: MutableMap<Int, PatternNode> = mutableMapOf(),
+        val icon: String? = null
     ) : PatternNode(name)
 
     class Action(
         override val name: String,
-        val launch: () -> Unit
+        val launch: () -> Unit,
+        val icon: String? = null
+    ) : PatternNode(name)
+
+    class App(
+        override val name: String,
+        val packageName: String? = null
     ) : PatternNode(name)
 }
 
