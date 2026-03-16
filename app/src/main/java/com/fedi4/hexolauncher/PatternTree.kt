@@ -37,12 +37,21 @@ class PatternTree {
                         "com.google.android.gm"
                     ),
                     4 to PatternNode.App(
-                        "Fotos",
-                        "com.google.android.apps.photos"
+                        "Play Store",
+                        "com.android.vending"
                     ),
                     5 to PatternNode.App(
                         "Spotify",
                         "com.spotify.music"
+                    ),
+                    6 to PatternNode.Folder(
+                        "Others",
+                        mutableMapOf(
+                            0 to PatternNode.App(
+                                "Google Maps",
+                                "com.google.android.apps.maps"
+                            ),
+                        )
                     ),
                 )
             )

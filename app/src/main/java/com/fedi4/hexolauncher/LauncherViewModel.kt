@@ -7,7 +7,7 @@ class LauncherViewModel : ViewModel() {
     val padState = PatternPadState()
     val tree = PatternTree()
 
-    fun onPatternFinished(pattern: List<Int>) {
+    fun onPatternFinished(pattern: List<Int>): Unit {
         when (val node = resolvePattern(tree.root, pattern)) {
             is PatternNode.Action -> node.launch()
             is PatternNode.Folder -> {

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -31,14 +33,18 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+
     buildFeatures {
         compose = true
     }
 }
 
+kotlin {
+    // Extension level
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget("11")
+    }
+}
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -50,6 +56,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.ui.graphics)
+    implementation(libs.androidx.runtime)
+    implementation(libs.androidx.graphics.shapes)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -57,4 +65,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation("dev.chrisbanes.haze:haze:1.7.2")
+    implementation("dev.chrisbanes.haze:haze-materials:1.7.2")
 }

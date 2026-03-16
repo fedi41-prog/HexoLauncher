@@ -1,6 +1,5 @@
- package com.fedi4.hexolauncher
+package com.fedi4.hexolauncher.appsorter
 
-import android.content.Context
 import android.graphics.Color.TRANSPARENT
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -14,25 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.fedi4.hexolauncher.appsorter.AppSorterActivity
-import com.fedi4.hexolauncher.compose.LauncherScreen
+import com.fedi4.hexolauncher.appsorter.compose.AppSorterScreen
 
-class MainActivity : ComponentActivity() {
 
-    init {
-        instance = this
-    }
+class AppSorterActivity : ComponentActivity() {
 
-    companion object {
-        private var instance: MainActivity? = null
-
-        fun applicationContext() : Context {
-            return instance!!.applicationContext
-        }
-        fun getActivity(): ComponentActivity {
-            return instance!!
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +30,13 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = lightTransparentStyle
         )
 
+
+
+
         setContent {
             MaterialTheme {
-                Box(Modifier.fillMaxSize()){
-                    LauncherScreen(
+                Box(Modifier.fillMaxSize().background(Color.White.copy(0.7f))){
+                    AppSorterScreen(
                         modifier = Modifier.padding().background(color = Color.Transparent)
                     )
                 }

@@ -32,6 +32,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".appsorter.AppSorterActivity"
+            android:exported="true"
+            android:label=""
+            android:theme="@style/Theme.HexoLauncher"
+
+            />
     </application>
 
 </manifest>
