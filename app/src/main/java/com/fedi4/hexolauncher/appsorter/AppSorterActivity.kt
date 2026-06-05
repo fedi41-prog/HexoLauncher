@@ -2,6 +2,7 @@ package com.fedi4.hexolauncher.appsorter
 
 import android.graphics.Color.TRANSPARENT
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -30,14 +31,18 @@ class AppSorterActivity : ComponentActivity() {
             navigationBarStyle = lightTransparentStyle
         )
 
+        val vm = AppSorterViewModel(this)
 
-
+        vm.loadAllApps()
+        vm.setTestPatternTree()
+        vm.savePatternRoot()
+        Log.d("PatternTree", vm.patternTreeRoot.toString())
 
         setContent {
             MaterialTheme {
                 Box(Modifier.fillMaxSize().background(Color.White.copy(0.7f))){
                     AppSorterScreen(
-                        modifier = Modifier.padding().background(color = Color.Transparent)
+                        modifier = Modifier.padding().background(color = Color.Transparent), vm
                     )
                 }
             }

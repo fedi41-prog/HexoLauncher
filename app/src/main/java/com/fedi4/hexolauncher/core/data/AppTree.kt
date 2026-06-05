@@ -1,4 +1,4 @@
-package com.fedi4.hexolauncher.appsorter
+package com.fedi4.hexolauncher.core.data
 
 sealed class AppTreeNode
     (

@@ -2,34 +2,29 @@ package com.fedi4.hexolauncher.appsorter
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ApplicationInfo
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
-import com.fedi4.hexolauncher.MainActivity
-import com.fedi4.hexolauncher.getCircleBitmap
-import com.fedi4.hexolauncher.loadAppIcon
+import com.fedi4.hexolauncher.core.data.AppTreeNode
+import com.fedi4.hexolauncher.core.data.PatternNode
+import com.fedi4.hexolauncher.core.data.PatternStorage
+import com.fedi4.hexolauncher.core.util.getCircleBitmap
 
-class AppSorterViewModel : ViewModel() {
+class AppSorterViewModel(context: Context) : ViewModel() {
+    val appContext: Context = context.applicationContext
+
     val appTreeRoot: AppTreeNode.Folder = AppTreeNode.Folder("Root")
+    var patternTreeRoot: PatternNode.Folder = PatternNode.Folder("Root")
     var apps: MutableList<AppInfo> = mutableListOf()
     var roundedIcons: MutableMap<String, ImageBitmap> = mutableMapOf()
 
 
 
-
-
-    fun loadAllApps(context: Context): List<AppInfo> {
+    fun loadAllApps(): List<AppInfo> {
         if (!apps.isEmpty()) return apps
 
-        val pm = context.packageManager
+        val pm = appContext.packageManager
 
         val intent = Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
@@ -48,6 +43,33 @@ class AppSorterViewModel : ViewModel() {
         } as MutableList<AppInfo>
 
         return apps
+    }
+
+    fun savePatternRoot() {
+        PatternStorage.save(appContext, patternTreeRoot)
+    }
+
+    fun setTestPatternTree() {
+        patternTreeRoot = PatternNode.Folder(
+            "Root",
+            buildMap {
+
+                for (i in 0..6) {
+                    
+                    put(i, PatternNode.Folder(
+                        "Folder $i",
+                        buildMap {
+                            for (j in 0..6) {
+                                val app = apps.random()
+                                put(j, PatternNode.App(app.name, app.packageName))
+                            }
+                        }
+                    ))
+                    
+                }
+
+            }
+        )
     }
     fun loadRoundedIcons(): MutableMap<String, ImageBitmap> {
         if (!roundedIcons.isEmpty()) return roundedIcons
