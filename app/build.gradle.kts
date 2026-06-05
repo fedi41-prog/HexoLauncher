@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
 }
 
 android {
@@ -66,6 +67,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation("dev.chrisbanes.haze:haze:1.7.2")
-    implementation("dev.chrisbanes.haze:haze-materials:1.7.2")
+    //implementation("dev.chrisbanes.haze:haze:1.7.2")
+    //implementation("dev.chrisbanes.haze:haze-materials:1.7.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
 }

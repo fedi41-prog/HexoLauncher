@@ -1,7 +1,6 @@
 package com.fedi4.hexolauncher.appsorter.compose
 
 
-import android.content.pm.ApplicationInfo
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,13 +8,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,26 +19,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fedi4.hexolauncher.PatternNode
+import com.fedi4.hexolauncher.core.data.PatternNode
 import com.fedi4.hexolauncher.R
 import com.fedi4.hexolauncher.appsorter.AppInfo
 import com.fedi4.hexolauncher.appsorter.AppSorterViewModel
-import com.fedi4.hexolauncher.getCircleBitmap
-import java.time.format.TextStyle
+import com.fedi4.hexolauncher.core.util.getCircleBitmap
 
 @Composable
 fun AppSorterScreen (
     modifier: Modifier = Modifier,
-    viewModel: AppSorterViewModel = remember { AppSorterViewModel() }
+    viewModel: AppSorterViewModel
 ) {
-    val apps = viewModel.loadAllApps(LocalContext.current)
+    val apps = viewModel.loadAllApps()
     val roundedIcons = viewModel.loadRoundedIcons()
 
 
