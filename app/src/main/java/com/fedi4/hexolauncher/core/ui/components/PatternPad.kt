@@ -3,6 +3,7 @@ package com.fedi4.hexolauncher.core.ui.components
 import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,25 +52,25 @@ fun PatternPad(
 
 
     // MORPH STUFF
-    val shapeA = remember {
-        RoundedPolygon.circle(
-            6,
-        )
-    }
-    val shapeB = remember {
-        RoundedPolygon(
-            numVertices = 6,
-            rounding = CornerRounding(0.2f)
+//    val shapeA = remember {
+//        RoundedPolygon.circle(
+//            6,
+//        )
+//    }
+//    val shapeB = remember {
+//        RoundedPolygon(
+//            numVertices = 6,
+//            rounding = CornerRounding(0.2f)
 
-        )
-    }
-    val morph = remember {
-        Morph(shapeA, shapeB)
-    }
+//        )
+//    }
+//    val morph = remember {
+//        Morph(shapeA, shapeB)
+//    }
     val animatedProgress = animateFloatAsState(
-        targetValue = if (!vm.isDragging.value) 1f else 0f,
+        targetValue = if (!vm.isDragging.value) 1f else 0.5f,
         label = "progress",
-        animationSpec = spring(dampingRatio = 0.4f, stiffness = Spring.StiffnessMedium)
+        animationSpec = spring(2f, Spring.StiffnessHigh)
     )
 
     // ===================
@@ -109,9 +111,10 @@ fun PatternPad(
 
                     }
                 )
-            }.background(
-                MaterialTheme.colorScheme.surface.copy(1f),
-                CustomRotatingMorphShape(morph, animatedProgress.value, 30f)
+            }.border(
+                3.dp,
+                MaterialTheme.colorScheme.surface.copy(1 - animatedProgress.value),
+                CircleShape
             ),
         itemSize = 100.dp,
         ringRadius = 110.dp,
@@ -150,24 +153,24 @@ fun PatternPadPoint(
 
 
     // MORPH STUFF
-    val shapeA = remember {
-        RoundedPolygon.circle(
-            6,
-        )
-    }
-    val shapeB = remember {
-        RoundedPolygon(
-            numVertices = 6,
-            rounding = CornerRounding(0.2f),
-        )
-    }
-    val morph = remember {
-        Morph(shapeA, shapeB)
-    }
+    //val shapeA = remember {
+    //    RoundedPolygon.circle(
+    //        6,
+    //    )
+    //}
+    //val shapeB = remember {
+    //    RoundedPolygon(
+    //        numVertices = 6,
+    //        rounding = CornerRounding(0.2f),
+    //    )
+    //}
+    //val morph = remember {
+    //    Morph(shapeA, shapeB)
+    //}
     val animatedProgress = animateFloatAsState(
-        targetValue = if (isLast) 1f else 0f,
+        targetValue = if (isLast) 2f else 0f,
         label = "progress",
-        animationSpec = spring(dampingRatio = 0.4f, stiffness = Spring.StiffnessMedium)
+        animationSpec = spring(2f, Spring.StiffnessMedium)
     )
     // ===================
 
@@ -179,24 +182,25 @@ fun PatternPadPoint(
                 painter = BitmapPainter(vm.getIcon(pointData.icon!!)),
                 contentDescription = null,
                 modifier = Modifier.size(size).align(Alignment.Center)
-                    .clip(MorphPolygonShape(morph, animatedProgress.value))
-                    .border(3.dp + animatedProgress.value.dp, Color.White, MorphPolygonShape(morph, animatedProgress.value))
+                    .clip(CircleShape)
+                    .border(3.dp + animatedProgress.value.dp, Color.White, CircleShape)
+                    .background(Color.Black)
             )
         } else if (pointData.type == PadPointType.FOLDER) {
             Box(
                 Modifier.size(size).align(Alignment.Center)
-                    .border(3.dp + animatedProgress.value.dp, Color.White, MorphPolygonShape(morph, animatedProgress.value)).padding(size/5)
+                    .border(3.dp + animatedProgress.value.dp, Color.White, CircleShape)//.padding(size/5)
+                    .background(Color.Black, shape = CircleShape)
             ) {
-                Text(pointData.text, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurface)
+                Text(pointData.text, fontSize = 10.sp, color = Color.White, modifier = Modifier.align(Alignment.Center))
             }
         } else if (pointData.type == PadPointType.ACTION) { }
         else if (pointData.type == PadPointType.EMPTY) {
             Box(
                 Modifier.size(size).align(Alignment.Center)
-                    .border(1.dp + animatedProgress.value.dp, Color.White, MorphPolygonShape(morph, animatedProgress.value))
+                    .border(1.dp + animatedProgress.value.dp, Color.White, CircleShape)
+                    .background(Color.Black, shape = CircleShape)
             )
         }
     }
-
-
 }
