@@ -1,4 +1,4 @@
-package com.fedi4.hexolauncher.core.ui.theme
+package com.fedi4.hexolauncher.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF755B0B)
