@@ -82,7 +82,7 @@ fun PatternPadPoint(
                 Modifier
                     .size(size)
                     .align(Alignment.Center)
-                    .border(3.dp + animationTouchingPoint.value.dp, Color.White, CircleShape)//.padding(size/5)
+                    .border(5.dp + animationTouchingPoint.value.dp, Color.White, CircleShape)//.padding(size/5)
                     .background(bgColor, shape = CircleShape)
             ) {
                 Text(pointData.text, fontSize = 10.sp, color = Color.White.copy(1.65f-animationDragging.value), modifier = Modifier.align(Alignment.Center))

@@ -10,6 +10,7 @@ import com.fedi4.hexolauncher.core.data.AppTreeNode
 import com.fedi4.hexolauncher.core.data.PatternNode
 import com.fedi4.hexolauncher.core.data.PatternStorage
 import com.fedi4.hexolauncher.core.util.getCircleBitmap
+import java.lang.Math.random
 
 class AppSorterViewModel(context: Context) : ViewModel() {
     val appContext: Context = context.applicationContext
@@ -60,8 +61,19 @@ class AppSorterViewModel(context: Context) : ViewModel() {
                         "Folder $i",
                         buildMap {
                             for (j in 0..6) {
-                                val app = apps.random()
-                                put(j, PatternNode.App(app.name, app.packageName))
+                                if (random() > 0.5) {
+                                put(j, PatternNode.Folder(
+                                    "Folder $j",
+                                    buildMap {
+                                        for (k in 0..6) {
+                                            val app = apps.random()
+                                            put(k, PatternNode.App(app.name, app.packageName))
+                                        }
+                                    }
+                                ))
+                                } else {                                            val app = apps.random()
+                                    put(j, PatternNode.App(app.name, app.packageName))
+                                }
                             }
                         }
                     ))

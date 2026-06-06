@@ -40,7 +40,7 @@ class AppSorterActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                Box(Modifier.fillMaxSize().background(Color.White.copy(0.7f))){
+                Box(Modifier.fillMaxSize().background(Color.White.copy(0.7f))) {
                     AppSorterScreen(
                         modifier = Modifier.padding().background(color = Color.Transparent), vm
                     )
