@@ -27,7 +27,7 @@ fun LauncherScreen(modifier: Modifier, vm: HexoPadViewModel) {
         TimeWidget(modifier = Modifier.weight(0.7f))
         Spacer(modifier = Modifier.weight(0.7f))
         PatternPadWrapper(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
+            modifier = Modifier.weight(1.1f).fillMaxWidth().align(Alignment.CenterHorizontally),
             vm = vm
         )
     }

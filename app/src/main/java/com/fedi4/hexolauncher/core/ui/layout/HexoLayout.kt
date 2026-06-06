@@ -18,6 +18,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import com.fedi4.hexolauncher.core.util.hexoPosition
 import java.util.Vector
 import kotlin.math.cos
 import kotlin.math.sin
@@ -79,18 +80,9 @@ fun HexoLayout(
             val cy = layoutSize / 2f
 
             placeables.forEachIndexed { index, p ->
-                val x: Float
-                val y: Float
-
-                if (index == 0) {
-                    x = cx - itemPx / 2
-                    y = cy - itemPx / 2
-                } else {
-                    val i = index - 1
-                    val angle = Math.toRadians(60.0 * i - 90.0)
-                    x = (cx + cos(angle) * radiusPx - itemPx / 2).toFloat()
-                    y = (cy + sin(angle) * radiusPx - itemPx / 2).toFloat()
-                }
+                var (x,y) = hexoPosition(index, center, radiusPx)
+                x -= itemPx / 2
+                y -= itemPx / 2
 
                 p.place(x.toInt(), y.toInt())
                 childCenters[index] = Offset(x + itemPx / 2, y + itemPx / 2)
