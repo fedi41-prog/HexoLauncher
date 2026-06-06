@@ -17,7 +17,7 @@ fun PatternTrailCanvas(modifier: Modifier) {
             .fillMaxHeight(),
     ) {
         drawRect(
-            color = Color.Blue,
+            color = Color.Blue.copy(0.25f),
         )
     }
 }
