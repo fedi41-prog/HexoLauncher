@@ -51,16 +51,10 @@ import kotlin.math.min
 fun PatternPad(
     modifier: Modifier = Modifier,
     vm: HexoPadViewModel,
-    layoutSize: Dp
+    patternPadGeometry: PatternPadGeometry,
 ) {
 
     val controller = remember { HexoLayoutController() }
-
-    val itemSize = (layoutSize / 3.2f)
-    val iconSize = (itemSize * 0.8f)
-    val radius = ((layoutSize-itemSize) / 2)
-
-
 
     // MORPH STUFF
 //    val shapeA = remember {
@@ -90,11 +84,14 @@ fun PatternPad(
 
 
     HexoLayout(
+
+        // MODIFIER
         modifier = modifier
             .pointerInput(Unit) {
                 awaitPointerEventScope {
                     while (true) {
                         val event = awaitPointerEvent()
+                        vm.pointerPosition.value = event.changes.first().position
                         // handle pointer event
                         if (event.type == PointerEventType.Press) {
                             Log.d("Pointer", event.type.toString())
@@ -118,21 +115,24 @@ fun PatternPad(
                         }
                     )
                 }.border(
-                3.dp,
-                MaterialTheme.colorScheme.surface.copy(1 - animatedProgress.value),
+                animatedProgress.value.dp*10,
+                Color.Red.copy(1 - animatedProgress.value),
                 CircleShape
                 ),
-        itemSize = itemSize,
-        ringRadius = radius,
+
+        // PARAMETERS
+        itemSize = patternPadGeometry.itemSizeDp,
+        ringRadius = patternPadGeometry.radiusDp,
         onNearestChild = { id ->
             vm.onTouchedPoint(id) },
         onExitCircle = {
             vm.onDragCancel() },
         controller = controller
     ) {
+        // PATTERN PAD POINTS
         repeat(7) { i ->
             PatternPadPoint(
-                size = iconSize,
+                size = patternPadGeometry.iconSizeDp,
                 id = i,
                 vm = vm
             )
@@ -143,27 +143,27 @@ fun PatternPad(
 @Composable
 fun PatternPadWrapper(modifier: Modifier, vm: HexoPadViewModel) {
 
-    var layoutSize by remember { mutableStateOf(0f) }
+    val padGeometry = remember { mutableStateOf(PatternPadGeometry.fromLayoutSize(0f)) }
 
     val density = LocalDensity.current
 
     Box(
         modifier = modifier.onSizeChanged {
-            layoutSize = min(it.width.toFloat(), it.height.toFloat())
+            padGeometry.value = PatternPadGeometry.fromLayoutSize(min(it.width.toFloat(), it.height.toFloat()))
         }
     ) {
-        if (layoutSize > 0f) {
-            val sizeDp = with(density) { layoutSize.toDp() }
+        if (padGeometry.value.layoutSize > 0f) {
+            val sizeDp = with(density) { padGeometry.value.layoutSize.toDp() }
             Box(Modifier.size(sizeDp).align(Alignment.Center)) {
 
                 PatternTrailCanvas(
-                    modifier = Modifier.size(sizeDp), vm
+                    modifier = Modifier.size(sizeDp), vm = vm, patternPadGeometry = padGeometry.value
                 )
 
                 PatternPad(
                     modifier = Modifier.size(sizeDp),
                     vm = vm,
-                    layoutSize = sizeDp
+                    patternPadGeometry = padGeometry.value
                 )
             }
         }
