@@ -157,7 +157,7 @@ fun PatternPadWrapper(modifier: Modifier, vm: HexoPadViewModel) {
             Box(Modifier.size(sizeDp).align(Alignment.Center)) {
 
                 PatternTrailCanvas(
-                    modifier = Modifier.size(sizeDp)
+                    modifier = Modifier.size(sizeDp), vm
                 )
 
                 PatternPad(
