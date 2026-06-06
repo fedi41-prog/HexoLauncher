@@ -56,7 +56,8 @@ fun PatternPad(
 
     val controller = remember { HexoLayoutController() }
 
-    val itemSize = (layoutSize / 4)
+    val itemSize = (layoutSize / 3.2f)
+    val iconSize = (itemSize * 0.8f)
     val radius = ((layoutSize-itemSize) / 2)
 
 
@@ -131,7 +132,7 @@ fun PatternPad(
     ) {
         repeat(7) { i ->
             PatternPadPoint(
-                size = itemSize,
+                size = iconSize,
                 id = i,
                 vm = vm
             )
