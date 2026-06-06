@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
-import com.fedi4.hexolauncher.core.ui.theme.AppTheme
+import com.fedi4.hexolauncher.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
 

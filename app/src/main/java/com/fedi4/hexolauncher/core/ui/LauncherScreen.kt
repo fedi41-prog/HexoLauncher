@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fedi4.hexolauncher.core.ui.components.PatternPad
+import com.fedi4.hexolauncher.core.ui.components.TimeWidget
 
 @Composable
 fun LauncherScreen(modifier: Modifier, vm: HexoPadViewModel) {
@@ -17,18 +18,13 @@ fun LauncherScreen(modifier: Modifier, vm: HexoPadViewModel) {
 
 
 
-
-
     Column(
         modifier = modifier.fillMaxSize()
             .padding(bottom = Dp(50f))
             .padding(16.dp)
-            //.hazeSource(hazeState)
-
     ) {
-        Spacer(modifier = Modifier.weight(1f)
-            //.hazeEffect(state = hazeState, style = HazeMaterials.ultraThin())
-        )
+        TimeWidget(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
         PatternPad(
             modifier = Modifier.weight(1f),
             vm = vm
