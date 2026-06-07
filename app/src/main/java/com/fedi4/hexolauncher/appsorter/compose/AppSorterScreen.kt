@@ -2,6 +2,7 @@ package com.fedi4.hexolauncher.appsorter.compose
 
 
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,19 +25,31 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fedi4.hexolauncher.core.data.PatternNode
 import com.fedi4.hexolauncher.R
 import com.fedi4.hexolauncher.appsorter.AppInfo
 import com.fedi4.hexolauncher.appsorter.AppSorterViewModel
 import com.fedi4.hexolauncher.core.util.getCircleBitmap
+import kotlin.toString
 
 @Composable
 fun AppSorterScreen (
     modifier: Modifier = Modifier,
-    viewModel: AppSorterViewModel
+    vm: AppSorterViewModel = viewModel(factory = AppSorterViewModel.Factory)
 ) {
-    val apps = viewModel.loadAllApps(LocalContext.current)
-    val roundedIcons = viewModel.loadRoundedIcons()
+    val context = LocalContext.current
+
+    LaunchedEffect(vm) {
+        vm.loadAllApps(context)
+    }
+    vm.setTestPatternTree()
+    LaunchedEffect(vm) {
+        vm.savePatternRoot()
+    }
+    Log.d("PatternTree", vm.patternTreeRoot.toString())
+
+    val roundedIcons = vm.loadRoundedIcons()
 
 
     Row {
@@ -45,9 +59,9 @@ fun AppSorterScreen (
             }
             LazyColumn(modifier = Modifier.weight(1f)) {
 
-                items(apps.size) {
+                items(vm.apps.size) {
                     if (it == 0) Spacer(modifier = Modifier.height(20.dp))
-                    AppListItem(appInfo = apps[it])
+                    AppListItem(appInfo = vm.apps[it])
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
@@ -62,7 +76,7 @@ fun AppSorterScreen (
                 Spacer(modifier = Modifier.height(20.dp))
                 for (i in 0 until 7) {
 
-                    PatternListItem(modifier = Modifier, node = PatternNode.Folder("Folder $i"), idx = i, vm = viewModel)
+                    PatternListItem(modifier = Modifier, node = PatternNode.Folder("Folder $i"), idx = i, vm = vm)
 
                 }
             }

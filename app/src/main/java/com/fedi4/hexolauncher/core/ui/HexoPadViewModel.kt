@@ -2,8 +2,10 @@ package com.fedi4.hexolauncher.core.ui
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -12,25 +14,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.fedi4.hexolauncher.appsorter.AppSorterViewModel
+import com.fedi4.hexolauncher.core.data.JsonPatternRepository
 import com.fedi4.hexolauncher.core.data.PadPoint
 import com.fedi4.hexolauncher.core.data.PatternNode
-import com.fedi4.hexolauncher.core.data.PatternStorage
+import com.fedi4.hexolauncher.core.data.PatternRepository
 import com.fedi4.hexolauncher.core.data.resolveWithTrace
+import com.fedi4.hexolauncher.core.ui.PatternPadUiState
 import com.fedi4.hexolauncher.core.util.convertToPadPoint
 import com.fedi4.hexolauncher.core.util.getCircleBitmap
 import com.fedi4.hexolauncher.core.util.loadAppIcon
 import com.fedi4.hexolauncher.core.util.startApp
 
-class HexoPadViewModel() : ViewModel() {
+class HexoPadViewModel(
+    private val patternRepository: PatternRepository
+) : ViewModel() {
     var patternRoot: PatternNode.Folder = PatternNode.Folder("Root")
-
-
-    val points = mutableStateListOf<PadPoint>()
-    val currentPattern = mutableStateListOf<Int>()
+    var uiState by mutableStateOf(PatternPadUiState())
+        private set
     val icons: MutableMap<String, ImageBitmap> = mutableMapOf()
-    val isDragging = mutableStateOf(false)
-    val pointerPosition = mutableStateOf(Offset.Zero)
-
     fun getIcon(packageName: String, appContext: Context): ImageBitmap {
         if (icons.containsKey(packageName)) return icons.getValue(packageName)
         val drawable = loadAppIcon(appContext.packageManager, packageName)
@@ -65,9 +67,9 @@ class HexoPadViewModel() : ViewModel() {
     }
 
     fun updatePoints() {
-        points.clear()
+        uiState.points.clear()
 
-        val trace = resolveWithTrace(patternRoot, currentPattern)
+        val trace = resolveWithTrace(patternRoot, uiState.currentPattern)
 
         var nodes = mapOf<Int, PatternNode>()
 
@@ -82,22 +84,22 @@ class HexoPadViewModel() : ViewModel() {
         }
 
         for (i in 0..6) {
-            points.add(convertToPadPoint(nodes[i], i))
+            uiState.points.add(convertToPadPoint(nodes[i], i))
         }
     }
 
     fun onDragStart() {
-        currentPattern.clear()
+        uiState.currentPattern.clear()
         updatePoints()
-        isDragging.value = true
+        uiState.isDragging.value = true
     }
 
     fun onTouchedPoint(id: Int) {
-        if (!isDragging.value) return
+        if (!uiState.isDragging.value) return
 
-        if (currentPattern.isEmpty() || currentPattern.last() != id) {
-            currentPattern.add(id)
-            Log.d("Pattern", currentPattern.toString())
+        if (uiState.currentPattern.isEmpty() || uiState.currentPattern.last() != id) {
+            uiState.currentPattern.add(id)
+            Log.d("Pattern", uiState.currentPattern.toString())
         }
 
         updatePoints()
@@ -105,43 +107,41 @@ class HexoPadViewModel() : ViewModel() {
 
 
     fun onDragEnd() {
-        onPatternFinished(currentPattern)
-        currentPattern.clear()
+        onPatternFinished(uiState.currentPattern)
+        uiState.currentPattern.clear()
         updatePoints()
-        isDragging.value = false
+        uiState.isDragging.value = false
     }
 
     fun onDragCancel() {
-        currentPattern.clear()
+        uiState.currentPattern.clear()
         updatePoints()
-        isDragging.value = false
+        uiState.isDragging.value = false
     }
 
     // SERIALIZATION
 
-    fun loadPatternRoot(appContext: Context): PatternNode.Folder {
-        val p = PatternStorage.load(appContext)
+    suspend fun loadPatternRoot(): PatternNode.Folder {
+        val p = patternRepository.getPattern()
         if (p is PatternNode.Folder) patternRoot = p
         return patternRoot
     }
-    fun savePatternRoot(appContext: Context) {
-        PatternStorage.save(appContext, patternRoot)
+
+    suspend fun savePatternRoot() {
+        patternRepository.savePattern(patternRoot)
     }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                HexoPadViewModel()
+
+                val application =
+                    this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]
+
+                HexoPadViewModel(
+                    patternRepository = JsonPatternRepository(application!!)
+                )
             }
         }
     }
-
 }
-
-
-
-data class PatternPadUiState(
-    val points: List<PadPoint> = listOf(),
-    val currentPattern: List<Int> = listOf(),
-    val isDragging: Boolean = false
-)

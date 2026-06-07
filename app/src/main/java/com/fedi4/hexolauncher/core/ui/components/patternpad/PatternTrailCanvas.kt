@@ -10,11 +10,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fedi4.hexolauncher.core.ui.HexoPadViewModel
+import com.fedi4.hexolauncher.core.ui.PatternPadUiState
 import com.fedi4.hexolauncher.core.util.hexoPosition
 
 
 @Composable
-fun PatternTrailCanvas(modifier: Modifier, vm: HexoPadViewModel = viewModel(), patternPadGeometry: PatternPadGeometry) {
+fun PatternTrailCanvas(modifier: Modifier,     vm: HexoPadViewModel = viewModel(factory = HexoPadViewModel.Factory)) {
+
+    val uiState = vm.uiState
+    val patternPadGeometry = uiState.geometry.value
 
     val center = Offset(patternPadGeometry.layoutSize / 2, patternPadGeometry.layoutSize / 2)
 
@@ -24,29 +28,27 @@ fun PatternTrailCanvas(modifier: Modifier, vm: HexoPadViewModel = viewModel(), p
             .fillMaxHeight()
     ) {
 
-        if (vm.isDragging.value) {
+        if (uiState.isDragging.value) {
 
             for (a in 0..3) {
-                val i = vm.currentPattern.size - a - 1
+                val i = uiState.currentPattern.size - a - 1
                 if (i < 0) break
-                val point = vm.currentPattern[i]
+                val point = uiState.currentPattern[i]
 
-                var nextPos = vm.pointerPosition.value
-                if (i < vm.currentPattern.size - 1) {
-                    nextPos = hexoPosition( vm.currentPattern[i+1], center, patternPadGeometry.radius)
+                var nextPos = uiState.pointerPosition.value
+                if (i < uiState.currentPattern.size - 1) {
+                    nextPos = hexoPosition( uiState.currentPattern[i+1], center, patternPadGeometry.radius)
                 }
 
                 val pos = hexoPosition(point, center, patternPadGeometry.radius)
 
                 drawLine(
-                    color = Color.White.copy(1f/(a+2)),
+                    color = Color.Blue.copy(1f/(a)),
                     start = pos,
                     end = nextPos,
-                    strokeWidth = 200f,
+                    strokeWidth = patternPadGeometry.iconSize/5,
                     cap = StrokeCap.Round
                 )
-
-
             }
         }
     }

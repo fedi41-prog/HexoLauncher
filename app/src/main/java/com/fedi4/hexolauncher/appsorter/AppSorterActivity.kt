@@ -31,15 +31,11 @@ class AppSorterActivity : ComponentActivity() {
             navigationBarStyle = lightTransparentStyle
         )
 
-        val vm = AppSorterViewModel()
-
         val context = applicationContext
 
-        vm.loadAllApps(applicationContext)
-        vm.setTestPatternTree()
-        vm.savePatternRoot(applicationContext)
 
-        Log.d("PatternTree", vm.patternTreeRoot.toString())
+
+
 
         setContent {
             MaterialTheme {
@@ -47,7 +43,7 @@ class AppSorterActivity : ComponentActivity() {
 
 
                     AppSorterScreen(
-                        modifier = Modifier.padding().background(color = Color.Transparent), vm
+                        modifier = Modifier.padding().background(color = Color.Transparent)
                     )
                 }
             }

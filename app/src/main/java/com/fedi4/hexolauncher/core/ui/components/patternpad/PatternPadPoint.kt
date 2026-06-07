@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fedi4.hexolauncher.core.data.PadPoint
 import com.fedi4.hexolauncher.core.data.PadPointType
 import com.fedi4.hexolauncher.core.ui.HexoPadViewModel
@@ -28,12 +30,15 @@ import com.fedi4.hexolauncher.core.ui.HexoPadViewModel
 fun PatternPadPoint(
     size: Dp,
     id: Int,
-    vm: HexoPadViewModel
+    vm: HexoPadViewModel = viewModel(factory = HexoPadViewModel.Factory)
 ) {
-    if (vm.points.isEmpty()) vm.updatePoints()
-    val pointData: PadPoint = vm.points[id]
 
-    val isLast = (!vm.currentPattern.isEmpty() && vm.currentPattern.last() == id)
+    val uiState = vm.uiState
+
+    if (uiState.points.isEmpty()) vm.updatePoints()
+    val pointData: PadPoint = uiState.points[id]
+
+    val isLast = (!uiState.currentPattern.isEmpty() && uiState.currentPattern.last() == id)
 
 
     // MORPH STUFF
@@ -57,7 +62,7 @@ fun PatternPadPoint(
         animationSpec = spring(2f, Spring.StiffnessMedium)
     )
     val animationDragging = animateFloatAsState(
-        targetValue = if (!vm.isDragging.value) 1f else 0.5f,
+        targetValue = if (!uiState.isDragging.value) 1f else 0.5f,
         label = "progress",
         animationSpec = spring(2f, Spring.StiffnessHigh)
     )

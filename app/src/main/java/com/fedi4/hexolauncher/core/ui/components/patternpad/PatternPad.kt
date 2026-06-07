@@ -28,14 +28,17 @@ import com.fedi4.hexolauncher.core.ui.layout.HexoLayout
 import com.fedi4.hexolauncher.core.ui.layout.HexoLayoutController
 import kotlin.math.min
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fedi4.hexolauncher.core.ui.PatternPadGeometry
+import com.fedi4.hexolauncher.core.ui.PatternPadUiState
 
 
 @Composable
 fun PatternPad(
     modifier: Modifier = Modifier,
-    vm: HexoPadViewModel = viewModel(),
-    patternPadGeometry: PatternPadGeometry,
+    vm: HexoPadViewModel = viewModel(factory = HexoPadViewModel.Factory)
 ) {
+    val uiState = vm.uiState
+    val geometry = uiState.geometry.value
 
     val controller = remember { HexoLayoutController() }
 
@@ -57,7 +60,7 @@ fun PatternPad(
 //    }
 
     val animatedProgress = animateFloatAsState(
-        targetValue = if (!vm.isDragging.value) 1f else 0.5f,
+        targetValue = if (!uiState.isDragging.value) 1f else 0.5f,
         label = "progress",
         animationSpec = spring(2f, Spring.StiffnessHigh)
     )
@@ -74,7 +77,7 @@ fun PatternPad(
                 awaitPointerEventScope {
                     while (true) {
                         val event = awaitPointerEvent()
-                        vm.pointerPosition.value = event.changes.first().position
+                        uiState.pointerPosition.value = event.changes.first().position
                         // handle pointer event
                         if (event.type == PointerEventType.Press) {
                             Log.d("Pointer", event.type.toString())
@@ -99,13 +102,13 @@ fun PatternPad(
                     )
                 }.border(
                 animatedProgress.value.dp*10,
-                Color.Red.copy(1 - animatedProgress.value),
+                Color.Black.copy(1 - animatedProgress.value),
                 CircleShape
                 ),
 
         // PARAMETERS
-        itemSize = patternPadGeometry.itemSizeDp,
-        ringRadius = patternPadGeometry.radiusDp,
+        itemSize = geometry.itemSizeDp,
+        ringRadius = geometry.radiusDp,
         onNearestChild = { id ->
             vm.onTouchedPoint(id) },
         onExitCircle = {
@@ -115,7 +118,7 @@ fun PatternPad(
         // PATTERN PAD POINTS
         repeat(7) { i ->
             PatternPadPoint(
-                size = patternPadGeometry.iconSizeDp,
+                size = geometry.iconSizeDp /** (1.5f - animatedProgress.value)*/,
                 id = i,
                 vm = vm
             )
@@ -124,36 +127,31 @@ fun PatternPad(
 }
 
 @Composable
-fun PatternPadWrapper(modifier: Modifier, vm: HexoPadViewModel = viewModel()) {
+fun PatternPadWrapper(modifier: Modifier,     vm: HexoPadViewModel = viewModel(factory = HexoPadViewModel.Factory)) {
 
-    val context = LocalContext.current
     LaunchedEffect(vm) {
-        vm.loadPatternRoot(context)
+        vm.loadPatternRoot()
     }
-
-    val padGeometry = remember { mutableStateOf(PatternPadGeometry.fromLayoutSize(0f)) }
 
     val density = LocalDensity.current
 
     Box(
         modifier = modifier.onSizeChanged {
-            padGeometry.value = PatternPadGeometry.fromLayoutSize(min(it.width.toFloat(), it.height.toFloat()))
+            vm.uiState.geometry.value = PatternPadGeometry.fromLayoutSize(min(it.width.toFloat(), it.height.toFloat()))
         }
     ) {
-        if (padGeometry.value.layoutSize > 0f) {
-            val sizeDp = with(density) { padGeometry.value.layoutSize.toDp() }
+        if (vm.uiState.geometry.value.layoutSize > 0f) {
+            val sizeDp = with(density) { vm.uiState.geometry.value.layoutSize.toDp() }
             Box(Modifier.size(sizeDp).align(Alignment.Center)) {
 
                 PatternTrailCanvas(
                     modifier = Modifier.size(sizeDp),
                     vm = vm,
-                    patternPadGeometry = padGeometry.value
                 )
 
                 PatternPad(
                     modifier = Modifier.size(sizeDp),
                     vm = vm,
-                    patternPadGeometry = padGeometry.value
                 )
             }
         }
