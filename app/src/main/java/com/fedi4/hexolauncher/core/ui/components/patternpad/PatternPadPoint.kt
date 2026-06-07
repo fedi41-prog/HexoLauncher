@@ -1,4 +1,4 @@
-package com.fedi4.hexolauncher.core.ui.components
+package com.fedi4.hexolauncher.core.ui.components.patternpad
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,7 +69,7 @@ fun PatternPadPoint(
     Box(Modifier.size(size)) {
         if (pointData.type == PadPointType.APP) {
             Image(
-                painter = BitmapPainter(vm.getIcon(pointData.icon!!)),
+                painter = BitmapPainter(vm.getIcon(pointData.icon!!, LocalContext.current)),
                 contentDescription = null,
                 modifier = Modifier
                     .size(size)

@@ -34,7 +34,7 @@ fun AppSorterScreen (
     modifier: Modifier = Modifier,
     viewModel: AppSorterViewModel
 ) {
-    val apps = viewModel.loadAllApps()
+    val apps = viewModel.loadAllApps(LocalContext.current)
     val roundedIcons = viewModel.loadRoundedIcons()
 
 

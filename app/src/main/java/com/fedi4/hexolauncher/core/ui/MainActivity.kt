@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
+import com.fedi4.hexolauncher.core.ui.screens.LauncherScreen
 import com.fedi4.hexolauncher.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
@@ -42,17 +43,12 @@ class MainActivity : ComponentActivity() {
            navigationBarStyle = lightTransparentStyle
        )
 
-       val vm = HexoPadViewModel(this)
-       vm.loadPatternRoot()
+
 
        setContent {
            AppTheme {
                Box(Modifier.Companion.fillMaxSize()) {
-                   LauncherScreen(
-                       modifier = Modifier.Companion.padding()
-                           .background(color = androidx.compose.ui.graphics.Color.Companion.Transparent),
-                       vm = vm
-                   )
+                   ScreenHost()
                }
            }
        }

@@ -9,6 +9,9 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.fedi4.hexolauncher.core.data.PadPoint
 import com.fedi4.hexolauncher.core.data.PatternNode
 import com.fedi4.hexolauncher.core.data.PatternStorage
@@ -18,9 +21,7 @@ import com.fedi4.hexolauncher.core.util.getCircleBitmap
 import com.fedi4.hexolauncher.core.util.loadAppIcon
 import com.fedi4.hexolauncher.core.util.startApp
 
-class HexoPadViewModel(context: Context) : ViewModel() {
-    val appContext: Context = context.applicationContext
-
+class HexoPadViewModel() : ViewModel() {
     var patternRoot: PatternNode.Folder = PatternNode.Folder("Root")
 
 
@@ -30,10 +31,9 @@ class HexoPadViewModel(context: Context) : ViewModel() {
     val isDragging = mutableStateOf(false)
     val pointerPosition = mutableStateOf(Offset.Zero)
 
-    fun getIcon(packageName: String): ImageBitmap {
+    fun getIcon(packageName: String, appContext: Context): ImageBitmap {
         if (icons.containsKey(packageName)) return icons.getValue(packageName)
-        val context = MainActivity.Companion.applicationContext()
-        val drawable = loadAppIcon(context.packageManager, packageName)
+        val drawable = loadAppIcon(appContext.packageManager, packageName)
         if (drawable != null) {
             icons[packageName] = getCircleBitmap(drawable.toBitmap(), 2).asImageBitmap()
             return icons.getValue(packageName)
@@ -75,7 +75,7 @@ class HexoPadViewModel(context: Context) : ViewModel() {
         if (trace.isEmpty()) {
             nodes = patternRoot.children
         } else {
-            var currentFolder = trace.findLast { it is PatternNode.Folder }
+            val currentFolder = trace.findLast { it is PatternNode.Folder }
             if (currentFolder is PatternNode.Folder) {
                 nodes = currentFolder.children
             }
@@ -119,13 +119,21 @@ class HexoPadViewModel(context: Context) : ViewModel() {
 
     // SERIALIZATION
 
-    fun loadPatternRoot(): PatternNode.Folder {
+    fun loadPatternRoot(appContext: Context): PatternNode.Folder {
         val p = PatternStorage.load(appContext)
         if (p is PatternNode.Folder) patternRoot = p
         return patternRoot
     }
-    fun savePatternRoot() {
+    fun savePatternRoot(appContext: Context) {
         PatternStorage.save(appContext, patternRoot)
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                HexoPadViewModel()
+            }
+        }
     }
 
 }

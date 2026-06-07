@@ -6,14 +6,17 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.fedi4.hexolauncher.core.data.AppTreeNode
 import com.fedi4.hexolauncher.core.data.PatternNode
 import com.fedi4.hexolauncher.core.data.PatternStorage
+import com.fedi4.hexolauncher.core.ui.HexoPadViewModel
 import com.fedi4.hexolauncher.core.util.getCircleBitmap
 import java.lang.Math.random
 
-class AppSorterViewModel(context: Context) : ViewModel() {
-    val appContext: Context = context.applicationContext
+class AppSorterViewModel : ViewModel() {
 
     val appTreeRoot: AppTreeNode.Folder = AppTreeNode.Folder("Root")
     var patternTreeRoot: PatternNode.Folder = PatternNode.Folder("Root")
@@ -22,7 +25,7 @@ class AppSorterViewModel(context: Context) : ViewModel() {
 
 
 
-    fun loadAllApps(): List<AppInfo> {
+    fun loadAllApps(appContext: Context): List<AppInfo> {
         if (!apps.isEmpty()) return apps
 
         val pm = appContext.packageManager
@@ -46,7 +49,7 @@ class AppSorterViewModel(context: Context) : ViewModel() {
         return apps
     }
 
-    fun savePatternRoot() {
+    fun savePatternRoot(appContext: Context) {
         PatternStorage.save(appContext, patternTreeRoot)
     }
 
@@ -91,5 +94,13 @@ class AppSorterViewModel(context: Context) : ViewModel() {
         }
 
         return roundedIcons
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                AppSorterViewModel()
+            }
+        }
     }
 }
