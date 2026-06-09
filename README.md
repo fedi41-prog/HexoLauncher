@@ -22,3 +22,5 @@ You can drag on the grid, to **open folders** and **navigate throw your apps**. 
 ## Next up
 - edit screen
 - view of all apps (scroll to the side)
+
+[*see devlogs on stardance!*](https://stardance.hackclub.com/projects/4281) 
